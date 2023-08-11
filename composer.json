@@ -21,11 +21,9 @@
 	"require-dev": {
 		"php": "^5.6 || ^7",
 		"brain/monkey": "^2.0",
-		"dealerdirect/phpcodesniffer-composer-installer": "^0.5.0",
 		"phpcompatibility/phpcompatibility-wp": "^2.0",
 		"phpunit/phpunit": "^5.7 || ^7",
-		"wp-coding-standards/wpcs": "^2",
-		"wp-media/phpunit": "dev-master"
+		"wp-coding-standards/wpcs": "^2"
 	},
 	"autoload": {},
 	"autoload-dev": {},
