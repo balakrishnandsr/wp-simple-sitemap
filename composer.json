@@ -12,7 +12,10 @@
 	],
 	"type": "library",
 	"config": {
-		"sort-packages": true
+		"sort-packages": true,
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
 	},
 	"support": {
 		"issues": "https://github.com/wp-media/package-template/issues",
@@ -25,7 +28,7 @@
 		"phpcompatibility/phpcompatibility-wp": "^2.0",
 		"phpunit/phpunit": "^5.7 || ^7",
 		"wp-coding-standards/wpcs": "^2",
-		"wp-media/phpunit": "dev-master"
+		"wp-media/phpunit": "2.0"
 	},
 	"autoload": {},
 	"autoload-dev": {},
