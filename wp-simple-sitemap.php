@@ -25,12 +25,12 @@ require_once 'inc/class-wp-simple-sitemap-activator-and-deactivator.php';
 /**
  * On activation
  */
-register_activation_hook( __FILE__, [ 'wp_simple_sitemap_activator_and_deactivator', 'activate_wp_simple_sitemap' ] );
+register_activation_hook( __FILE__, [ 'WP_Simple_Sitemap_Activator_And_Deactivator', 'activate_wp_simple_sitemap' ] );
 
 /**
  * On deactivation
  */
-register_deactivation_hook( __FILE__, [ 'wp_simple_sitemap_activator_and_deactivator', 'deactivate_wp_simple_sitemap' ] );
+register_deactivation_hook( __FILE__, [ 'WP_Simple_Sitemap_Activator_And_Deactivator', 'deactivate_wp_simple_sitemap' ] );
 
 /**
  * Start the Plugin if meets the requirements
@@ -41,3 +41,4 @@ if ( wp_simple_sitemap_activator_and_deactivator::wpss_plugin_requiremnet_check(
 
 	WP_Simple_Sitemap::get_instance();
 }
+

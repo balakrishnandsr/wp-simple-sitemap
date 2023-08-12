@@ -9,12 +9,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-if ( ! class_exists( ' Wp_Simple_Sitemap_Activator_And_Deactivator' ) ) {
+if ( ! class_exists( ' WP_Simple_Sitemap_Activator_And_Deactivator' ) ) {
 
 	/**
 	 * Class for handling activation and deaction actions.
 	 */
-	class  Wp_Simple_Sitemap_Activator_And_Deactivator {
+	class  WP_Simple_Sitemap_Activator_And_Deactivator {
 
 		/**
 		 * Check the plugin requirement
@@ -25,8 +25,11 @@ if ( ! class_exists( ' Wp_Simple_Sitemap_Activator_And_Deactivator' ) ) {
 			if ( self::php_version_check() && self::wp_version_check() ) {
 				return true;
 			} else {
+				if ( ! function_exists( 'wp_get_current_user' ) ) {
+					include ABSPATH . 'wp-includes/pluggable.php';
+				}
 				if ( current_user_can( 'manage_options' ) ) {
-					add_action( 'admin_notices', [ __CLASS__, 'display_error_notice' ] );
+					add_action( 'admin_notices', 'Wp_Simple_Sitemap_Activator_And_Deactivator::display_error_notice' );
 				}
 				return false;
 			}
@@ -36,9 +39,9 @@ if ( ! class_exists( ' Wp_Simple_Sitemap_Activator_And_Deactivator' ) ) {
 		 * Display error message on admin screen
 		 * */
 		public static function display_error_notice() {
-			echo '<div><ul>';
+			echo '<div class="notice notice-error is-dismissible">';
 			if ( ! self::php_version_check() ) {
-				echo '<li>' .
+				echo '<p>' .
 						esc_html(
 							sprintf(
 								/* translators: %1s: current php version; %2s: minimum version */
@@ -46,11 +49,12 @@ if ( ! class_exists( ' Wp_Simple_Sitemap_Activator_And_Deactivator' ) ) {
 								PHP_VERSION,
 								5.6
 							)
-						) . '</li>';
+						) . '</p>';
+
 			}
 			if ( ! self::wp_version_check() ) {
 				global $wp_version;
-				echo '<li>' .
+				echo '<p>' .
 					esc_html(
 						sprintf(
 						/* translators: %1s: current wp version; %2s: minimum version */
@@ -58,9 +62,9 @@ if ( ! class_exists( ' Wp_Simple_Sitemap_Activator_And_Deactivator' ) ) {
 							$wp_version,
 							5.0
 						)
-					) . '</li>';
+					) . '</p>';
 			}
-			echo '</ul></div>';
+			echo '</div>';
 		}
 
 		/**
