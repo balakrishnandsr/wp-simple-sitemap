@@ -38,21 +38,27 @@ if ( ! class_exists( ' Wp_Simple_Sitemap_Activator_And_Deactivator' ) ) {
 		public static function display_error_notice() {
 			echo '<div><ul>';
 			if ( ! self::php_version_check() ) {
-				echo '<li>' . sprintf(
-					// translation for php version requirement.
-					esc_html_e( 'Your PHP version: %1$s, Needs atleast %2$s or higher', 'wp-simple-sitemap' ),
-					PHP_VERSION,
-					5.6
-				) . '</li>';
+				echo '<li>' .
+						esc_html(
+							sprintf(
+								/* translators: %1s: current php version; %2s: minimum version */
+								__( 'Your PHP version: %1$s, Needs atleast %2$s or higher', 'wp-simple-sitemap' ),
+								PHP_VERSION,
+								5.6
+							)
+						) . '</li>';
 			}
 			if ( ! self::wp_version_check() ) {
 				global $wp_version;
-				echo '<li>' . sprintf(
-					// translation for WP version requirement.
-					esc_html_e( 'Your WordPress version: %1$s, Needs atleast %2$s or higher', 'wp-simple-sitemap' ),
-					$wp_version,
-					5.0
-				) . '</li>';
+				echo '<li>' .
+					esc_html(
+						sprintf(
+						/* translators: %1s: current wp version; %2s: minimum version */
+							__( 'Your WordPress version: %1$s, Needs atleast %2$s or higher', 'wp-simple-sitemap' ),
+							$wp_version,
+							5.0
+						)
+					) . '</li>';
 			}
 			echo '</ul></div>';
 		}
@@ -80,14 +86,14 @@ if ( ! class_exists( ' Wp_Simple_Sitemap_Activator_And_Deactivator' ) ) {
 		 * Changes required when install plugin
 		 */
 		public static function activate_wp_simple_sitemap() {
-			// return true;
+
 		}
 
 		/**
 		 * Changes required when uninstall plugin
 		 */
 		public static function deactivate_wp_simple_sitemap() {
-			 // return true;
+
 		}
 
 	}

@@ -52,6 +52,11 @@ if ( ! class_exists( ' WP_Simple_Sitemap' ) ) {
 			$this->includes();
 		}
 
+		/**
+		 * Include Files
+		 *
+		 * @return void
+		 */
 		public function includes() {
 			include_once 'class-wp-simple-sitemap-admin.php';
 			include_once 'class-wp-simple-sitemap-public.php';

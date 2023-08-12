@@ -68,46 +68,7 @@ if ( ! class_exists( 'WP_Simple_Sitemap_Admin' ) ) {
 				return;
 			}
 			echo 'hello';
-			/*
-			$message = $this->validateAndInitiateSitemapProcess();
-			$Cron = Cron::instance();
-			$nextCronAt = $Cron->getNextScheduled();
-			$sitemap = Sitemap::instance()->getSitemap();
-			$updated_at = '';
-			if (isset($sitemap['updated_at'])) {
-				$updated_at = $Cron->dateFormat($sitemap['updated_at']);
-			}
-			$filepath = WPS_ASHLIN_PATH . 'src/Admin/templates/dashboard.php';
-			$data = [
-				'message' => $message,
-				'next_cron_at' => $nextCronAt,
-				'sitemap' => $sitemap,
-				'last_updated_at' => $updated_at,
-			];
-			$this->render($filepath, $data);*/
-		}
 
-		/**
-		 * Validate and generate sitemap
-		 * */
-		private function validateAndInitiateSitemapProcess() {
-			/*
-			if ('wp_sitemap_crawl' !== sanitize_text_field(wp_unslash($_POST['action'] ?? ''))) {
-				return;
-			}
-			$nonce = sanitize_text_field(wp_unslash($_POST['_nonce'] ?? ''));
-			// Verify nonce
-			if (!empty($nonce) && wp_verify_nonce($nonce, 'wp_sitemap_crawl')) {
-				$result = Sitemap::instance()->initiateSitemapGenerationProcess();
-				if ($result['status'] === true) {
-					return '<div class="notice notice-success"><p>' . $result['message'] . '</p></div>';
-				} else {
-					return '<div class="notice notice-warning"><p>' . $result['message'] . '</p></div>';
-				}
-			} else {
-				$message = esc_html__('Invalid request.', 'wp-sitemap-ashlin');
-				return '<div class="notice notice-warning"><p>' . $message . '</p></div>';
-			}*/
 		}
 	}
 }
