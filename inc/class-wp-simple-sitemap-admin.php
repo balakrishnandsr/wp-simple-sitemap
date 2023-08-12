@@ -14,8 +14,8 @@ if ( ! class_exists( 'WP_Simple_Sitemap_Admin' ) ) {
 	/**
 	 * Class for handling admin actions.
 	 */
-	class  WP_Simple_Sitemap_Admin
-	{
+	class  WP_Simple_Sitemap_Admin {
+
 
 		/**
 		 * Variable to hold instance of WP_Simple_Sitemap_Admin
@@ -41,22 +41,20 @@ if ( ! class_exists( 'WP_Simple_Sitemap_Admin' ) ) {
 		/**
 		 * Register the event
 		 * */
-		private function __construct()
-		{
-			add_action('admin_menu', array( $this, 'add_admin_menu_page') );
+		private function __construct() {
+			add_action( 'admin_menu', [ $this, 'add_admin_menu_page' ] );
 		}
 
 		/**
 		 * For adding admin menu
 		 * */
-		public function add_admin_menu_page()
-		{
+		public function add_admin_menu_page() {
 			add_menu_page(
-				__('WP Simple Sitemap', 'wp-simple-sitemap'),
+				__( 'WP Simple Sitemap', 'wp-simple-sitemap' ),
 				'WP Simple Sitemap',
 				'manage_options',
 				'wp-simple-sitemap',
-				array($this, 'admin_page_content'),
+				[ $this, 'admin_page_content' ],
 				'',
 				6
 			);
@@ -65,13 +63,13 @@ if ( ! class_exists( 'WP_Simple_Sitemap_Admin' ) ) {
 		/**
 		 * Admin menu content
 		 * */
-		public function admin_page_content()
-		{
-			if (!current_user_can('manage_options')) {
+		public function admin_page_content() {
+			if ( ! current_user_can( 'manage_options' ) ) {
 				return;
 			}
-			echo "hello";
-			/*$message = $this->validateAndInitiateSitemapProcess();
+			echo 'hello';
+			/*
+			$message = $this->validateAndInitiateSitemapProcess();
 			$Cron = Cron::instance();
 			$nextCronAt = $Cron->getNextScheduled();
 			$sitemap = Sitemap::instance()->getSitemap();
@@ -92,9 +90,9 @@ if ( ! class_exists( 'WP_Simple_Sitemap_Admin' ) ) {
 		/**
 		 * Validate and generate sitemap
 		 * */
-		private function validateAndInitiateSitemapProcess()
-		{
-			/*if ('wp_sitemap_crawl' !== sanitize_text_field(wp_unslash($_POST['action'] ?? ''))) {
+		private function validateAndInitiateSitemapProcess() {
+			/*
+			if ('wp_sitemap_crawl' !== sanitize_text_field(wp_unslash($_POST['action'] ?? ''))) {
 				return;
 			}
 			$nonce = sanitize_text_field(wp_unslash($_POST['_nonce'] ?? ''));

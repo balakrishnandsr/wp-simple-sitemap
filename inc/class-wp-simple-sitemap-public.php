@@ -16,7 +16,7 @@ if ( ! class_exists( ' WP_Simple_Sitemap_Public' ) ) {
 	 */
 	class  WP_Simple_Sitemap_Public {
 
-		
+
 
 	}
 

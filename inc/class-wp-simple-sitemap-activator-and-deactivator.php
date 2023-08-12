@@ -26,7 +26,7 @@ if ( ! class_exists( ' Wp_Simple_Sitemap_Activator_And_Deactivator' ) ) {
 				return true;
 			} else {
 				if ( current_user_can( 'manage_options' ) ) {
-					add_action( 'admin_notices', array( __CLASS__, 'display_error_notice' ) );
+					add_action( 'admin_notices', [ __CLASS__, 'display_error_notice' ] );
 				}
 				return false;
 			}
@@ -80,14 +80,14 @@ if ( ! class_exists( ' Wp_Simple_Sitemap_Activator_And_Deactivator' ) ) {
 		 * Changes required when install plugin
 		 */
 		public static function activate_wp_simple_sitemap() {
-			//return true;
+			// return true;
 		}
 
 		/**
 		 * Changes required when uninstall plugin
 		 */
 		public static function deactivate_wp_simple_sitemap() {
-			 //return true;
+			 // return true;
 		}
 
 	}

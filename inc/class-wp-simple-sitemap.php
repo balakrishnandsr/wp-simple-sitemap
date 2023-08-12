@@ -14,7 +14,7 @@ if ( ! class_exists( ' WP_Simple_Sitemap' ) ) {
 	/**
 	 * Main Class for WP Simple Sitemap plugin.
 	 */
-	class WP_Simple_Sitemap{
+	class WP_Simple_Sitemap {
 
 		/**
 		 * Variable to hold instance of WP Simple Sitemap.
@@ -52,7 +52,7 @@ if ( ! class_exists( ' WP_Simple_Sitemap' ) ) {
 			$this->includes();
 		}
 
-		public function includes(){
+		public function includes() {
 			include_once 'class-wp-simple-sitemap-admin.php';
 			include_once 'class-wp-simple-sitemap-public.php';
 		}
