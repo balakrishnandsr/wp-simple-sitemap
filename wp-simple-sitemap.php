@@ -37,6 +37,13 @@ register_deactivation_hook( __FILE__, [ 'WP_Simple_Sitemap_Activator_And_Deactiv
  */
 if ( wp_simple_sitemap_activator_and_deactivator::wpss_plugin_requiremnet_check() ) {
 
+	/**
+	 * Set base file URL
+	 */
+	if ( ! defined( 'WPSS_PLUGIN_BASENAME' ) ) {
+		define( 'WPSS_PLUGIN_BASENAME', plugin_basename( __FILE__ ) ); // phpcs:ignore
+	}
+
 	include_once 'inc/class-wp-simple-sitemap.php';
 
 	WP_Simple_Sitemap::get_instance();
