@@ -43,7 +43,27 @@ if ( ! class_exists( 'WP_Simple_Sitemap_Admin' ) ) {
 		 * */
 		private function __construct() {
 			add_action( 'admin_menu', [ $this, 'add_admin_menu_page' ] );
-			add_filter( 'plugin_action_links_' . WPSS_PLUGIN_BASENAME, [ $this, 'wpss_plugin_actions' ] );
+
+		}
+
+		/**
+		 * Handle call to functions which is not available in this class
+		 *
+		 * @param string $function_name The function name.
+		 * @param array  $arguments Array of arguments passed while calling $function_name.
+		 * @return result of function call
+		 */
+		public function __call( $function_name, $arguments = [] ) {
+
+			if ( ! is_callable( [ 'WP_Simple_Sitemap', $function_name ] ) ) {
+				return;
+			}
+
+			if ( ! empty( $arguments ) ) {
+				return call_user_func_array( [ 'WP_Simple_Sitemap', $function_name ], $arguments );
+			} else {
+				return call_user_func( [ 'WP_Simple_Sitemap', $function_name ] );
+			}
 		}
 
 		/**
@@ -150,33 +170,23 @@ if ( ! class_exists( 'WP_Simple_Sitemap_Admin' ) ) {
 							</ol>
 						</p>
 
-						<a href="#" class="button button-primary button-hero"> <?php esc_html_e( 'Run', 'wp-simple-sitemap' ); ?> </a>
+						<a href="javascript:void(0)" class="button button-primary button-hero" id="wpss-run" data-nonce="<?php echo wp_create_nonce( 'wpss-run' ); //phpcs:ignore ?>"> <?php esc_html_e( 'Run', 'wp-simple-sitemap' ); ?> </a>
 
-						<a href="#" class="button button-primary button-hero"> <?php esc_html_e( 'View', 'wp-simple-sitemap' ); ?> </a>
+						<a href="javascript:void(0)" class="button button-primary button-hero" id="wpss-view" data-nonce="<?php echo wp_create_nonce( 'wpss-view' ); //phpcs:ignore ?>"> <?php esc_html_e( 'View', 'wp-simple-sitemap' ); ?> </a>
 					</div>
-					<div class="welcome-panel-column-container">
+<!--					<div class="welcome-panel-column-container">-->
+<!---->
+<!--						<img class="wpss-loader" src="--><?php // echo esc_url( includes_url() . 'js/thickbox/loadingAnimation.gif' ); ?><!--" style="width: 100%; padding: 10% 100% 10% 100%; display: none;"/>-->
+<!---->
+<!---->
+<!--					</div>-->
 
-						<img src="<?php echo esc_url( includes_url() . 'js/thickbox/loadingAnimation.gif' ); ?>" style="width: 100%; padding: 10% 100% 10% 100%;"/>
-
-					</div>
 				</div>
 			</div>
 			<?php
 
 		}
 
-		/**
-		 * Function to add more action on plugins page
-		 *
-		 * @param array $links Existing links.
-		 * @return array|string[]
-		 */
-		public function wpss_plugin_actions( $links ) {
-			$action_links = [
-				'settings' => '<a href="' . esc_url( admin_url( 'admin.php?page=wp-simple-sitemap' ) ) . '">' . __( 'Settings', 'wp-simple-sitemap' ) . '</a>',
-			];
-			return array_merge( $action_links, $links );
-		}
 	}
 }
 

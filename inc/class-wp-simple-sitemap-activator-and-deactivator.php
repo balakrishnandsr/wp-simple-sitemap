@@ -100,6 +100,19 @@ if ( ! class_exists( ' WP_Simple_Sitemap_Activator_And_Deactivator' ) ) {
 
 		}
 
+		/**
+		 * Function to add more action on plugins page
+		 *
+		 * @param array $links Existing links.
+		 * @return array|string[]
+		 */
+		public function wpss_add_plugin_actions( $links ) {
+			$action_links = [
+				'settings' => '<a href="' . esc_url( admin_url( 'admin.php?page=wp-simple-sitemap' ) ) . '">' . __( 'Settings', 'wp-simple-sitemap' ) . '</a>',
+			];
+			return array_merge( $action_links, $links );
+		}
+
 	}
 
 }
