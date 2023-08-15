@@ -83,6 +83,7 @@ if ( ! class_exists( ' WP_Simple_Sitemap_Ajax' ) ) {
 			wp_send_json_success( $result );
 		}
 
+
 		/**
 		 * WPSS ajax crawl home page urls
 		 *
@@ -90,16 +91,12 @@ if ( ! class_exists( ' WP_Simple_Sitemap_Ajax' ) ) {
 		 */
 		public function wpss_ajax_get_home_page_urls() {
 
-			$nonce         = ! empty( $_POST['wpss_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['wpss_nonce'] ) ) : '';
-			$home_page_url = $this->get_homepage_url();
-			if ( wp_verify_nonce( $nonce, 'wpss-run' ) && ! empty( $home_page_url ) ) {
-				$response = wp_remote_post( $home_page_url );
-				$html     = wp_remote_retrieve_body( $response );
-				file_put_contents( WP_PLUGIN_DIR . '/wp-simple-sitemap/inc/homepage/homepage.html', $html );
-				$urls = $this->get_urls_from_content( $html );
-				return $this->create_sitemap_html( $urls );
+			$nonce  = ! empty( $_POST['wpss_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['wpss_nonce'] ) ) : '';
+			$method = ! empty( $_POST['method'] ) ? sanitize_text_field( wp_unslash( $_POST['method'] ) ) : '';
+			if ( wp_verify_nonce( $nonce, 'wpss-run' ) ) {
+				return $this->wpss_refresh_sitemap( $method );
 			}
-			return esc_html__( 'OOPs!! Something Went Wrong, Please try again later.', 'wp-simple-sitemap' );
+			return esc_html__( 'Oops! Something Went Wrong, Please try again later.', 'wp-simple-sitemap' );
 		}
 
 		/**
@@ -110,8 +107,8 @@ if ( ! class_exists( ' WP_Simple_Sitemap_Ajax' ) ) {
 		public function wpss_ajax_view_sitemap() {
 			$nonce = ! empty( $_POST['wpss_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['wpss_nonce'] ) ) : '';
 			if ( wp_verify_nonce( $nonce, 'wpss-view' ) ) {
-				$sitemap_html = get_transient('wp_simple_sitemap_html');
-				if ( !empty( $sitemap_html ) ) {
+				$sitemap_html = get_transient( 'wp_simple_sitemap_html' );
+				if ( ! empty( $sitemap_html ) ) {
 					return $sitemap_html;
 				}
 				return '<h3>' . esc_html__( 'Please click the "Run" button!', 'wp-simple-sitemap' ) . '</h3>';

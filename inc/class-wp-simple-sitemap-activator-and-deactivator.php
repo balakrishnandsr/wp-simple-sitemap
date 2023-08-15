@@ -97,7 +97,10 @@ if ( ! class_exists( ' WP_Simple_Sitemap_Activator_And_Deactivator' ) ) {
 		 * Changes required when uninstall plugin
 		 */
 		public static function deactivate_wp_simple_sitemap() {
-
+			$timestamp = wp_next_scheduled( 'wpss_cron_schedules' );
+			if ( $timestamp ) {
+				wp_unschedule_event( $timestamp, 'wpss_cron_schedules' );
+			}
 		}
 
 		/**

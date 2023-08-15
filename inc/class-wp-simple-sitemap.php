@@ -50,7 +50,8 @@ if ( ! class_exists( ' WP_Simple_Sitemap' ) ) {
 		 */
 		private function __construct() {
 			$this->includes();
-			add_action( 'admin_enqueue_scripts', [ $this, 'add_wpss_scripts' ], 100 );
+			add_action( 'admin_enqueue_scripts', [ $this, 'wpss_add_scripts' ], 100 );
+			add_action( 'wpss_cron_schedules', [ 'WP_Simple_Sitemap', 'wpss_refresh_sitemap' ] );
 		}
 
 		/**
@@ -60,7 +61,6 @@ if ( ! class_exists( ' WP_Simple_Sitemap' ) ) {
 		 */
 		public function includes() {
 			include_once 'class-wp-simple-sitemap-admin.php';
-			include_once 'class-wp-simple-sitemap-public.php';
 			include_once 'class-wp-simple-sitemap-ajax.php';
 		}
 
@@ -69,7 +69,7 @@ if ( ! class_exists( ' WP_Simple_Sitemap' ) ) {
 		 *
 		 * @return void
 		 */
-		public function add_wpss_scripts() {
+		public function wpss_add_scripts() {
 			if ( ! empty( $_GET['page'] ) && 'wp-simple-sitemap' !== $_GET['page'] ) { //phpcs:ignore
 				return;
 			}
@@ -136,7 +136,7 @@ if ( ! class_exists( ' WP_Simple_Sitemap' ) ) {
 				$urls = self::get_urls_from_content();
 			}
 
-			$urls = self::unique_multidimentional_array( $urls, 0 );
+			$urls = self::unique_multidimensional_array( $urls, 0 );
 
 			foreach ( $urls as $url ) {
 				$permalink = ! empty( $url[0] ) ? $url[0] : '';
@@ -282,29 +282,29 @@ if ( ! class_exists( ' WP_Simple_Sitemap' ) ) {
 				</div>
 			<?php
 			$sitemap_html = apply_filters(
-					'wpss_sitemap_customizable_content',
-					ob_get_contents(),
-					[
-							'homepage_urls' => $urls,
-							'page_links'    => $page_lists,
-							'post_links'    => $post_lists,
-							'other_links'   => $other_links,
-					]
+				'wpss_sitemap_customizable_content',
+				ob_get_contents(),
+				[
+					'homepage_urls' => $urls,
+					'page_links'    => $page_lists,
+					'post_links'    => $post_lists,
+					'other_links'   => $other_links,
+				]
 			);
 			ob_end_clean();
-			set_transient( 'wp_simple_sitemap_html', $sitemap_html,  HOUR_IN_SECONDS );
+			set_transient( 'wp_simple_sitemap_html', $sitemap_html, HOUR_IN_SECONDS );
 			file_put_contents( WP_PLUGIN_DIR . '/wp-simple-sitemap/inc/sitemap/sitemap.html', $sitemap_html );
 			return $sitemap_html;
 		}
 
 		/**
-		 * Get unique multidimentional array
+		 * Get unique multidimensional array
 		 *
 		 * @param array     $array array.
 		 * @param array-key $key array key.
 		 * @return array
 		 */
-		public static function unique_multidimentional_array( $array, $key ) {
+		public static function unique_multidimensional_array( $array, $key ) {
 			$temp_array = [];
 			$key_array  = [];
 			$i          = 0;
@@ -316,6 +316,41 @@ if ( ! class_exists( ' WP_Simple_Sitemap' ) ) {
 				$i++;
 			}
 			return $temp_array;
+		}
+
+		/**
+		 * Cron event scheduling.
+		 *
+		 * @param string $method Name.
+		 * @return void
+		 */
+		public static function wpss_schedule_event( $method = '' ) {
+			$timestamp = wp_next_scheduled( 'wpss_cron_schedules' );
+			if ( ! $timestamp ) {
+				wp_schedule_event( time() + HOUR_IN_SECONDS, 'hourly', 'wpss_cron_schedules' );
+			} elseif ( 'get_home_page_urls' === $method ) {
+				wp_unschedule_event( $timestamp, 'wpss_cron_schedules' );
+				wp_schedule_event( time() + HOUR_IN_SECONDS, 'hourly', 'wpss_cron_schedules' );
+			}
+		}
+
+		/**
+		 * Refresh sitemap.
+		 *
+		 * @param string $method Name.
+		 * @return string
+		 */
+		public static function wpss_refresh_sitemap( $method = '' ) {
+			$homepage_url = self::get_homepage_url();
+			if ( ! empty( $homepage_url ) ) {
+				$response = wp_remote_post( $homepage_url );
+				$html     = wp_remote_retrieve_body( $response );
+				file_put_contents( WP_PLUGIN_DIR . '/wp-simple-sitemap/inc/homepage/homepage.html', $html );
+				$urls = self::get_urls_from_content( $html );
+				self::wpss_schedule_event( $method );
+				return self::create_sitemap_html( $urls );
+			}
+			return esc_html__( 'Oops! Something Went Wrong, Please try again later.', 'wp-simple-sitemap' );
 		}
 	}
 
