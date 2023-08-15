@@ -174,12 +174,9 @@ if ( ! class_exists( ' WP_Simple_Sitemap' ) ) {
 						<?php
 						if ( ! empty( $page_lists[0] ) ) {
 							foreach ( $page_lists[0] as $no_parent_page ) {
-								if ( is_object( $no_parent_page ) ) {
-									$permalink = get_permalink( $no_parent_page );
-									$title     = get_the_title( $no_parent_page );
-									if ( empty( $permalink ) || empty( $title ) ) {
-										continue;
-									}
+								if ( is_object( $no_parent_page ) && isset( $no_parent_page->ID ) ) {
+									$permalink = get_permalink( $no_parent_page->ID );
+									$title     = get_the_title( $no_parent_page->ID );
 									?>
 										<li>
 											<a href="<?php echo esc_url( $permalink ); ?>" target="_blank"><?php echo esc_html( $title ); ?></a>

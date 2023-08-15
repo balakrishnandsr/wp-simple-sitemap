@@ -21,8 +21,6 @@ jQuery(document).ready(function ($) {
 				$('.wpss-loader').remove();
 			},
 			error: function (request, error) {
-				console.log(error);
-				console.log(request);
 				alert('OOPs!! Something Went Wrong, Please try again later.');
 			},
 			success: function (response) {
@@ -37,22 +35,21 @@ jQuery(document).ready(function ($) {
 	 */
 	$('body').on( 'click', '#wpss-view', function(){
 		let view_nonce = $(this).data('nonce');
-
 		$.ajax({
-			data: {method: 'display_crawled_urls', action: 'wpss_ajax', wpss_nonce: view_nonce},
+			data: {method: 'view_sitemap', action: 'wpss_ajax', wpss_nonce: view_nonce},
 			type: 'post',
 			url: ajaxurl,
 			beforeSend: function () {
-				loader.show();
+				$('.wpss-results').html(loader);
 			},
 			complete: function () {
-				loader.hide();
+				$('.wpss-loader').remove();
 			},
 			error: function (request, error) {
 				alert('OOPs!! Something Went Wrong, Please try again later.');
 			},
 			success: function (response) {
-
+				$('.wpss-results').html(response.data);
 			}
 		});
 
