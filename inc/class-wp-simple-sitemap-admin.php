@@ -163,16 +163,16 @@ if ( ! class_exists( 'WP_Simple_Sitemap_Admin' ) ) {
 						</h3>
 						<p>
 							<ol>
-								<li> <?php esc_html_e( 'Click "Run" button for initiate the crawl for home page and view the result .', 'wp-simple-sitemap' ); ?></li>
+								<li> <?php esc_html_e( 'Click "Run" button to start the crawl for home page and view the result .', 'wp-simple-sitemap' ); ?></li>
 								<li> <?php esc_html_e( 'Click "View" button for see the saved result.', 'wp-simple-sitemap' ); ?></li>
-								<li> <?php esc_html_e( 'Create a new page (for sitemap) and insert the shortcode [wp-simple-sitemap].', 'wp-simple-sitemap' ); ?></li>
+								<li> <?php esc_html_e( 'To view the sitemap on front-end, create a new page and insert the shortcode [wp-simple-sitemap].', 'wp-simple-sitemap' ); ?></li>
 								<li> <?php esc_html_e( "Done, yeah that's easy.", 'wp-simple-sitemap' ); ?></li>
 							</ol>
 						</p>
 
-						<a href="javascript:void(0)" class="button button-primary button-hero" id="wpss-run" data-nonce="<?php echo wp_create_nonce( 'wpss-run' ); //phpcs:ignore ?>"> <?php esc_html_e( 'Run', 'wp-simple-sitemap' ); ?> </a>
+						<a href="javascript:void(0)" class="button button-primary button-hero" id="wpss-run" data-nonce="<?php echo esc_html( wp_create_nonce( 'wpss-run' ) ); ?>"> <?php esc_html_e( 'Run', 'wp-simple-sitemap' ); ?> </a>
 
-						<a href="javascript:void(0)" class="button button-primary button-hero" id="wpss-view" data-nonce="<?php echo wp_create_nonce( 'wpss-view' ); //phpcs:ignore ?>"> <?php esc_html_e( 'View', 'wp-simple-sitemap' ); ?> </a>
+						<a href="javascript:void(0)" class="button button-primary button-hero" id="wpss-view" data-nonce="<?php echo esc_html( wp_create_nonce( 'wpss-view' ) ); ?>"> <?php esc_html_e( 'View', 'wp-simple-sitemap' ); ?> </a>
 					</div>
 					<div class="welcome-panel-column-container wpss-results">
 

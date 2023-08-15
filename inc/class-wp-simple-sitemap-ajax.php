@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-if ( ! class_exists( ' WP_Simple_Sitemap_Ajax' ) ) {
+if ( ! class_exists( 'WP_Simple_Sitemap_Ajax' ) ) {
 
 	/**
 	 * Main Class for WP Simple Sitemap plugin.
@@ -96,7 +96,7 @@ if ( ! class_exists( ' WP_Simple_Sitemap_Ajax' ) ) {
 			if ( wp_verify_nonce( $nonce, 'wpss-run' ) ) {
 				return $this->wpss_refresh_sitemap( $method );
 			}
-			return esc_html__( 'Oops! Something Went Wrong, Please try again later.', 'wp-simple-sitemap' );
+			return esc_html__( 'Oops! Authentication failed, Please try again.', 'wp-simple-sitemap' );
 		}
 
 		/**
@@ -117,14 +117,17 @@ if ( ! class_exists( ' WP_Simple_Sitemap_Ajax' ) ) {
 
 		/**
 		 * Shortcode to view the results in front end.
-		 * Use wpss_sitemap_customizable_content filter to customize content.
+		 * Use wp_simple_sitemap_customizable_content filter to customize content.
 		 *
 		 * @return string
 		 */
 		public function wp_simple_sitemap() {
-			$path = WP_PLUGIN_DIR . '/wp-simple-sitemap/inc/sitemap/sitemap.html';
-			if ( file_exists( $path ) ) {
-				return file_get_contents( $path );
+
+			$path     = plugin_dir_url( __FILE__ ) . 'sitemap/sitemap.html';
+			$response = wp_remote_post( $path );
+			$html     = wp_remote_retrieve_body( $response );
+			if ( ! empty( $html ) ) {
+				return $html;
 			}
 			return '<h3>' . esc_html__( 'Oops!, seems to be no content available.', 'wp-simple-sitemap' ) . '</h3>';
 		}

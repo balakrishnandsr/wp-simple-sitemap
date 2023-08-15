@@ -24,6 +24,13 @@ if ( ! class_exists( ' WP_Simple_Sitemap' ) ) {
 		private static $instance = null;
 
 		/**
+		 * Variable to hold instance of WP_Filesystem_Direct.
+		 *
+		 * @var $wp_filesystem_direct
+		 */
+		private static $wp_filesystem_direct = null;
+
+		/**
 		 * Get single instance of WP Simple Sitemap.
 		 *
 		 * @return WP_Simple_Sitemap Singleton object of WP_Simple_Sitemap
@@ -52,6 +59,10 @@ if ( ! class_exists( ' WP_Simple_Sitemap' ) ) {
 			$this->includes();
 			add_action( 'admin_enqueue_scripts', [ $this, 'wpss_add_scripts' ], 100 );
 			add_action( 'wpss_cron_schedules', [ 'WP_Simple_Sitemap', 'wpss_refresh_sitemap' ] );
+
+			require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
+			require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-direct.php';
+			self::$wp_filesystem_direct = new WP_Filesystem_Direct( new StdClass() );
 		}
 
 		/**
@@ -107,8 +118,12 @@ if ( ! class_exists( ' WP_Simple_Sitemap' ) ) {
 		public static function get_urls_from_content( $html = '' ) {
 			$urls_from_content = [];
 			$path              = plugin_dir_url( __FILE__ ) . 'homepage/homepage.html';
-			if ( empty( $html ) && file_exists( $path ) ) {
-				$html = file_get_contents( $path );
+			/**
+			 * It will use for direct function call.
+			 */
+			if ( empty( $html ) ) {
+				$response = wp_remote_post( $path );
+				$html     = wp_remote_retrieve_body( $response );
 			}
 
 			if ( preg_match_all( '/<a\s+.*?href=[\"\']?([^\"\' >]*)[\"\']?[^>]*>(.*?)<\/a>/i', $html, $matches, PREG_SET_ORDER ) ) {
@@ -172,6 +187,7 @@ if ( ! class_exists( ' WP_Simple_Sitemap' ) ) {
 						<h3><?php esc_html_e( 'Pages', 'wp-simple-sitemap' ); ?></h3>
 						<ul>
 						<?php
+						$no_page_found = empty( $page_lists ) ? esc_html__( 'No urls found!', 'wp-simple-sitemap' ) : '';
 						if ( ! empty( $page_lists[0] ) ) {
 							foreach ( $page_lists[0] as $no_parent_page ) {
 								if ( is_object( $no_parent_page ) && isset( $no_parent_page->ID ) ) {
@@ -205,7 +221,7 @@ if ( ! class_exists( ' WP_Simple_Sitemap' ) ) {
 									<?php
 									if ( is_array( $child_page ) && ! empty( $child_page ) ) {
 										?>
-											<ul class="wpss-child-ul">
+										<ul class="wpss-child-ul">
 										<?php
 										foreach ( $child_page as  $page ) {
 											if ( is_object( $page ) && isset( $page->ID ) ) {
@@ -219,8 +235,8 @@ if ( ! class_exists( ' WP_Simple_Sitemap' ) ) {
 											}
 										}
 										?>
-											 </ul>
-											<?php
+										</ul>
+										<?php
 									}
 									?>
 									</li>
@@ -230,6 +246,13 @@ if ( ! class_exists( ' WP_Simple_Sitemap' ) ) {
 						}
 						?>
 						</ul>
+						<?php
+						if ( ! empty( $no_page_found ) ) {
+							?>
+							<p> <?php echo esc_html( $no_page_found ); ?> </p>
+							<?php
+						}
+						?>
 					</div>
 				</div>
 				<div class="welcome-panel-column">
@@ -246,11 +269,26 @@ if ( ! class_exists( ' WP_Simple_Sitemap' ) ) {
 								if ( ! empty( $list[0] ) && ! empty( $list[1] ) ) {
 									?>
 										<li>
-											<a href="<?php echo esc_url( $list[0] ); ?>" target="_blank"><?php esc_html_e( $list[1], 'wp-simple-sitemap' ); ?></a>
+											<a href="<?php echo esc_url( $list[0] ); ?>" target="_blank">
+																<?php
+																echo esc_html(
+																	sprintf(
+																	/* translators: %s: url title */
+																		__( '&nbsp; %s', 'wp-simple-sitemap' ),
+																		$list[1]
+																	)
+																);
+																?>
+												&nbsp;
+									</a>
 										</li>
 										<?php
 								}
 							}
+						} else {
+							?>
+							<li><?php esc_html_e( 'No urls found!', 'wp-simple-sitemap' ); ?></li>
+							<?php
 						}
 						?>
 						</ul>
@@ -270,11 +308,25 @@ if ( ! class_exists( ' WP_Simple_Sitemap' ) ) {
 								if ( ! empty( $link[0] ) && ! empty( $link[1] ) ) {
 									?>
 										<li>
-										<a href="<?php echo esc_url( $link[0] ); ?>" target="_blank"><?php esc_html_e( $link[1], 'wp-simple-sitemap' ); ?></a>
+										<a href="<?php echo esc_url( $link[0] ); ?>" target="_blank">
+															<?php
+															echo esc_html(
+																sprintf(
+																/* translators: %s: url title */
+																	__( '&nbsp; %s', 'wp-simple-sitemap' ),
+																	$link[1]
+																)
+															);
+															?>
+											</a>
 										</li>
 										<?php
 								}
 							}
+						} else {
+							?>
+							<li><?php esc_html_e( 'No urls found!', 'wp-simple-sitemap' ); ?></li>
+							<?php
 						}
 						?>
 						</ul>
@@ -282,7 +334,7 @@ if ( ! class_exists( ' WP_Simple_Sitemap' ) ) {
 				</div>
 			<?php
 			$sitemap_html = apply_filters(
-				'wpss_sitemap_customizable_content',
+				'wp_simple_sitemap_customizable_content',
 				ob_get_contents(),
 				[
 					'homepage_urls' => $urls,
@@ -293,8 +345,10 @@ if ( ! class_exists( ' WP_Simple_Sitemap' ) ) {
 			);
 			ob_end_clean();
 			set_transient( 'wp_simple_sitemap_html', $sitemap_html, HOUR_IN_SECONDS );
-			file_put_contents( WP_PLUGIN_DIR . '/wp-simple-sitemap/inc/sitemap/sitemap.html', $sitemap_html );
-			return $sitemap_html;
+			if ( self::$wp_filesystem_direct->put_contents( WP_PLUGIN_DIR . '/wp-simple-sitemap/inc/sitemap/sitemap.html', $sitemap_html, 0644 ) ) {
+				return $sitemap_html;
+			}
+
 		}
 
 		/**
@@ -345,12 +399,15 @@ if ( ! class_exists( ' WP_Simple_Sitemap' ) ) {
 			if ( ! empty( $homepage_url ) ) {
 				$response = wp_remote_post( $homepage_url );
 				$html     = wp_remote_retrieve_body( $response );
-				file_put_contents( WP_PLUGIN_DIR . '/wp-simple-sitemap/inc/homepage/homepage.html', $html );
-				$urls = self::get_urls_from_content( $html );
-				self::wpss_schedule_event( $method );
-				return self::create_sitemap_html( $urls );
+				if ( self::$wp_filesystem_direct->put_contents( WP_PLUGIN_DIR . '/wp-simple-sitemap/inc/homepage/homepage.html', $html, 0644 ) ) {
+					$urls = self::get_urls_from_content( $html );
+					self::wpss_schedule_event( $method );
+					return self::create_sitemap_html( $urls );
+				} else {
+					return esc_html__( 'Oops! Unable to create content.', 'wp-simple-sitemap' );
+				}
 			}
-			return esc_html__( 'Oops! Something Went Wrong, Please try again later.', 'wp-simple-sitemap' );
+			return esc_html__( 'Oops! Something Went Wrong, Please try again.', 'wp-simple-sitemap' );
 		}
 	}
 
