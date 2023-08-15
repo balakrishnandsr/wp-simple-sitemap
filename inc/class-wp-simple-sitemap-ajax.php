@@ -110,11 +110,11 @@ if ( ! class_exists( ' WP_Simple_Sitemap_Ajax' ) ) {
 		public function wpss_ajax_view_sitemap() {
 			$nonce = ! empty( $_POST['wpss_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['wpss_nonce'] ) ) : '';
 			if ( wp_verify_nonce( $nonce, 'wpss-view' ) ) {
-				$path = WP_PLUGIN_DIR . '/wp-simple-sitemap/inc/sitemap/sitemap.html';
-				if ( file_exists( $path ) ) {
-					return file_get_contents( $path );
+				$sitemap_html = get_transient('wp_simple_sitemap_html');
+				if ( !empty( $sitemap_html ) ) {
+					return $sitemap_html;
 				}
-				return '<h3>' . esc_html__( 'Please click "Run" button first!.', 'wp-simple-sitemap' ) . '</h3>';
+				return '<h3>' . esc_html__( 'Please click the "Run" button!', 'wp-simple-sitemap' ) . '</h3>';
 			}
 		}
 
@@ -129,7 +129,7 @@ if ( ! class_exists( ' WP_Simple_Sitemap_Ajax' ) ) {
 			if ( file_exists( $path ) ) {
 				return file_get_contents( $path );
 			}
-			return '<h3>' . esc_html__( 'Please click "Run" button first!.', 'wp-simple-sitemap' ) . '</h3>';
+			return '<h3>' . esc_html__( 'Oops!, seems to be no content available.', 'wp-simple-sitemap' ) . '</h3>';
 		}
 	}
 

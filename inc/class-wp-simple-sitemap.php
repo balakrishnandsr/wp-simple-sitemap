@@ -281,18 +281,18 @@ if ( ! class_exists( ' WP_Simple_Sitemap' ) ) {
 					</div>
 				</div>
 			<?php
-			$sitemap_html = ob_get_contents();
-			ob_end_clean();
 			$sitemap_html = apply_filters(
-				'wpss_sitemap_customizable_content',
-				$sitemap_html,
-				[
-					'homepage_urls' => $urls,
-					'page_links'    => $page_lists,
-					'post_links'    => $post_lists,
-					'other_links'   => $other_links,
-				]
+					'wpss_sitemap_customizable_content',
+					ob_get_contents(),
+					[
+							'homepage_urls' => $urls,
+							'page_links'    => $page_lists,
+							'post_links'    => $post_lists,
+							'other_links'   => $other_links,
+					]
 			);
+			ob_end_clean();
+			set_transient( 'wp_simple_sitemap_html', $sitemap_html,  HOUR_IN_SECONDS );
 			file_put_contents( WP_PLUGIN_DIR . '/wp-simple-sitemap/inc/sitemap/sitemap.html', $sitemap_html );
 			return $sitemap_html;
 		}
