@@ -43,6 +43,7 @@ if ( ! class_exists( ' WP_Simple_Sitemap_Ajax' ) ) {
 		 */
 		private function __construct() {
 			add_action( 'wp_ajax_wpss_ajax', [ $this, 'wpss_ajax_requests' ] );
+			add_shortcode( 'wp-simple-sitemap', [ $this, 'wp_simple_sitemap' ] );
 		}
 
 		/**
@@ -109,12 +110,26 @@ if ( ! class_exists( ' WP_Simple_Sitemap_Ajax' ) ) {
 		public function wpss_ajax_view_sitemap() {
 			$nonce = ! empty( $_POST['wpss_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['wpss_nonce'] ) ) : '';
 			if ( wp_verify_nonce( $nonce, 'wpss-view' ) ) {
-				$path = WP_PLUGIN_DIR . '/wp-simple-sitemap/inc/sitemap/sitemap1.html';
+				$path = WP_PLUGIN_DIR . '/wp-simple-sitemap/inc/sitemap/sitemap.html';
 				if ( file_exists( $path ) ) {
 					return file_get_contents( $path );
 				}
 				return '<h3>' . esc_html__( 'Please click "Run" button first!.', 'wp-simple-sitemap' ) . '</h3>';
 			}
+		}
+
+		/**
+		 * Shortcode to view the results in front end.
+		 * Use wpss_sitemap_customizable_content filter to customize content.
+		 *
+		 * @return string
+		 */
+		public function wp_simple_sitemap() {
+			$path = WP_PLUGIN_DIR . '/wp-simple-sitemap/inc/sitemap/sitemap.html';
+			if ( file_exists( $path ) ) {
+				return file_get_contents( $path );
+			}
+			return '<h3>' . esc_html__( 'Please click "Run" button first!.', 'wp-simple-sitemap' ) . '</h3>';
 		}
 	}
 
