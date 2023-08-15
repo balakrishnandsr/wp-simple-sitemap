@@ -3,7 +3,7 @@
  */
 jQuery(document).ready(function ($) {
 
-	var loader = $('.wpss-loader');
+	var loader = $('.wpss-loader-container').html();
 
 	/**
 	 * Script for crawl the home page
@@ -15,10 +15,10 @@ jQuery(document).ready(function ($) {
 			type: 'post',
 			url: ajaxurl,
 			beforeSend: function () {
-				loader.show();
+				$('.wpss-results').html(loader);
 			},
 			complete: function () {
-				loader.hide();
+				$('.wpss-loader').remove();
 			},
 			error: function (request, error) {
 				console.log(error);
@@ -26,7 +26,7 @@ jQuery(document).ready(function ($) {
 				alert('OOPs!! Something Went Wrong, Please try again later.');
 			},
 			success: function (response) {
-
+				$('.wpss-results').html(response.data);
 			}
 		});
 

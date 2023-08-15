@@ -72,7 +72,7 @@ if ( ! class_exists( ' WP_Simple_Sitemap_Ajax' ) ) {
 		 */
 		public function wpss_ajax_requests() {
 
-			$method_name = ! empty( $_POST['method'] ) ? 'wpss_ajax_' . sanitize_text_field( wp_unslash( $_POST['method'] ) ) : '';
+			$method_name = ! empty( $_POST['method'] ) ? 'wpss_ajax_' . sanitize_text_field( wp_unslash( $_POST['method'] ) ) : ''; //phpcs:ignore
 
 			if ( current_user_can( 'manage_options' ) && method_exists( $this, $method_name ) ) {
 				$result = $this->$method_name();
@@ -85,7 +85,7 @@ if ( ! class_exists( ' WP_Simple_Sitemap_Ajax' ) ) {
 		/**
 		 * WPSS ajax crawl home page urls
 		 *
-		 * @return void
+		 * @return string
 		 */
 		public function wpss_ajax_get_home_page_urls() {
 
@@ -96,9 +96,9 @@ if ( ! class_exists( ' WP_Simple_Sitemap_Ajax' ) ) {
 				$html     = wp_remote_retrieve_body( $response );
 				file_put_contents( WP_PLUGIN_DIR . '/wp-simple-sitemap/inc/homepage/homepage.html', $html );
 				$urls = $this->get_urls_from_content( $html );
-				$this->create_sitemap_html( $urls );
+				return $this->create_sitemap_html( $urls );
 			}
-
+			return esc_html__( 'OOPs!! Something Went Wrong, Please try again later.', 'wp-simple-sitemap' );
 		}
 
 		/**

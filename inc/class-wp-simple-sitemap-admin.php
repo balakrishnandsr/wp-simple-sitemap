@@ -174,12 +174,12 @@ if ( ! class_exists( 'WP_Simple_Sitemap_Admin' ) ) {
 
 						<a href="javascript:void(0)" class="button button-primary button-hero" id="wpss-view" data-nonce="<?php echo wp_create_nonce( 'wpss-view' ); //phpcs:ignore ?>"> <?php esc_html_e( 'View', 'wp-simple-sitemap' ); ?> </a>
 					</div>
-<!--					<div class="welcome-panel-column-container">-->
-<!---->
-<!--						<img class="wpss-loader" src="--><?php // echo esc_url( includes_url() . 'js/thickbox/loadingAnimation.gif' ); ?><!--" style="width: 100%; padding: 10% 100% 10% 100%; display: none;"/>-->
-<!---->
-<!---->
-<!--					</div>-->
+					<div class="welcome-panel-column-container wpss-results">
+
+					</div>
+					<div class="wpss-loader-container" style="display: none;">
+						<img class="wpss-loader" src="<?php echo esc_url( includes_url() . 'js/thickbox/loadingAnimation.gif' ); ?>" style="width: 100%; padding: 10% 100% 10% 100%;"/>
+					</div>
 
 				</div>
 			</div>
